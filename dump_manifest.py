@@ -67,7 +67,7 @@ def generate_script_file(dst_filepath, contents):
 def read_txt_file_or_empty(src_filepath):
     if not os.path.exists(src_filepath):
         return ""
-    with open(src_filepathf, 'r') as inf:
+    with open(src_filepath, 'r') as inf:
         return inf.read().rstrip()
 
 def write_txt_file(dst_filepath, contents):
