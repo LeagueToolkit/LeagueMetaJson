@@ -1,0 +1,26 @@
+name: AutoUpdate
+on:
+  schedule:
+    - cron: '0 8 * * 3'
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+    - name: "Install qemu"
+      run: sudo apt-get -qq install qemu-system-i386
+    - name: "Pull meta"
+      run: python3 dump_manifest.py
+    - name: Get tag
+      id: gettag
+      uses: juliangruber/read-file-action@v1
+      with:
+         path: ./meta/version.txt
+    - uses: EndBug/add-and-commit@v7
+      with:
+        add: "meta/meta.json"
+        default_author: github_actions
+        message: "Automatic update"
+        tag: ${{ steps.gettag.outputs.content }}

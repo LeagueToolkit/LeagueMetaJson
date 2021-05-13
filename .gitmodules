@@ -1,0 +1,12 @@
+[submodule "source/linux"]
+	path = source/linux
+	url = https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
+[submodule "source/BugSplat"]
+	path = source/BugSplat
+	url = https://github.com/moonshadow565/lolmetadumper2
+[submodule "source/wine-lol-headless"]
+	path = source/wine-lol-headless
+	url = https://github.com/ramxrem/wine-lol
+[submodule "source/ManifestDownloader"]
+	path = source/ManifestDownloader
+	url = https://github.com/Morilli/ManifestDownloader
