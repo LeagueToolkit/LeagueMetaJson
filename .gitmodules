@@ -1,8 +1,5 @@
-[submodule "source/linux"]
-	path = source/linux
-	url = https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
-[submodule "source/BugSplat"]
-	path = source/BugSplat
+[submodule "source/lolmetadumper2"]
+	path = source/lolmetadumper2
 	url = https://github.com/moonshadow565/lolmetadumper2
 [submodule "source/wine-lol-headless"]
 	path = source/wine-lol-headless

@@ -11,10 +11,12 @@ import time
 
 INIT_SCRIPT = """#!/bin/sh
 export WINEDEBUG=-all
+export RUST_BACKTRACE=1
+export WINEDLLOVERRIDES="powrprof=n"
 cd /share/lol
 rm -rf meta/
 mkdir meta/
-wine League\ of\ Legends.exe
+timeout 300 wine League\ of\ Legends.exe -TestCrashpad
 echo $? > exitcode
 exit 0
 """
@@ -112,7 +114,7 @@ def run_qemu(bindir, workdir):
 # Dump meta
 def dump_meta(bindir, manifest, workdir, dst_dir):
     download_files(f'{bindir}/ManifestDownloader', manifest, f'{workdir}/share/lol', '\.dll|\.exe')
-    copy_file(f'{bindir}/BugSplat.dll', f'{workdir}/share/lol/BugSplat.dll')
+    copy_file(f'{bindir}/powrprof.dll', f'{workdir}/share/lol/powrprof.dll')
     if not os.path.exists(f"{workdir}/wine.img"):
         decompress_lzma(f"{bindir}/wine.img.lzma", f"{workdir}/wine.img")
     generate_script_file(f"{workdir}/share/init.sh", INIT_SCRIPT)
