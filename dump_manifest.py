@@ -16,7 +16,7 @@ export WINEDLLOVERRIDES="powrprof=n"
 cd /share/lol
 rm -rf meta/
 mkdir meta/
-timeout 300 wine League\ of\ Legends.exe -TestCrashpad
+timeout 300 wine League\ of\ Legends.exe foo.rofl
 echo $? > exitcode
 exit 0
 """
