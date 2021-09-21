@@ -113,8 +113,8 @@ def run_qemu(bindir, workdir):
 
 # Dump meta
 def dump_meta(bindir, manifest, workdir, dst_dir):
-    download_files(f'{bindir}/ManifestDownloader', manifest, f'{workdir}/share/lol', '\.dll|\.exe')
-    copy_file(f'{bindir}/powrprof.dll', f'{workdir}/share/lol/powrprof.dll')
+    download_files(f'{bindir}/ManifestDownloader', manifest, f'{workdir}/share/lol', '\.dll|\.exe|Bootstrap\.windows')
+    copy_file(f'{bindir}/powrprof.dll', f'{workdir}/share/lol/AkRecorder.dll')
     if not os.path.exists(f"{workdir}/wine.img"):
         decompress_lzma(f"{bindir}/wine.img.lzma", f"{workdir}/wine.img")
     generate_script_file(f"{workdir}/share/init.sh", INIT_SCRIPT)
