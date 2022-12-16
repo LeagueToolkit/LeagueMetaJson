@@ -1,9 +1,3 @@
 [submodule "source/lolmetadumper2"]
 	path = source/lolmetadumper2
 	url = https://github.com/moonshadow565/lolmetadumper2
-[submodule "source/wine-lol-headless"]
-	path = source/wine-lol-headless
-	url = https://github.com/ramxrem/wine-lol
-[submodule "source/ManifestDownloader"]
-	path = source/ManifestDownloader
-	url = https://github.com/Morilli/ManifestDownloader
