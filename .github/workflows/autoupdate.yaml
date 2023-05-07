@@ -5,12 +5,14 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
     - name: "Install qemu"
-      run: sudo apt-get -qq update && sudo apt-get -qq install qemu-system-i386
+      run: sudo apt-get -qq update && sudo apt-get -qq install python3-zstandard qemu-system-x86
+    - name: "Build image"
+      run: python3 get_linux.py
     - name: "Pull meta"
       run: python3 dump_manifest.py
     - name: Get tag

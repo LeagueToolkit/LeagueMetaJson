@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import os
 import shutil
-import lzma
 import subprocess
 import sys
 import json
@@ -10,14 +9,25 @@ import urllib.request
 import time
 
 INIT_SCRIPT = """#!/bin/sh
-export WINEDEBUG=-all
+#export WINEDEBUG=-all
 export RUST_BACKTRACE=1
-export WINEDLLOVERRIDES="WINMM=n"
-cd /share/lol
-rm -rf meta/
-mkdir meta/
-timeout 300 wine League\ of\ Legends.exe foo.rofl
-echo $? > exitcode
+export WINEDLLOVERRIDES=rsaenh.dll=n
+export WINEPREFIX="/tmp/prefix"
+timeout 300 wine64 wineboot
+
+rm -rf /sharelol/meta/
+mkdir /share/lol/meta/
+
+cp /share/lol/rsaenh.dll $WINEPREFIX/drive_c/windows/system32/
+cp /share/lol/yolo.dll $WINEPREFIX/drive_c/windows/system32/
+cp -r /share/lol $WINEPREFIX/drive_c/
+
+cd $WINEPREFIX/drive_c/lol
+timeout 300 wine64 League\ of\ Legends.exe foo.rofl
+
+echo $? > /share/lol/exitcode
+cp $WINEPREFIX/drive_c/lol/meta/* /share/lol/meta/
+
 exit 0
 """
 
@@ -48,15 +58,6 @@ def copy_file(src_filepath, dst_filepath):
 def prune_folder(dirname):
     if os.path.exists(dirname):
         shutil.rmtree(dirname)
-
-# Extract lzma compressed file
-def decompress_lzma(src_filepath, dst_filepath):
-    print(f"Decompressing {src_filepath} to {dst_filepath}")
-    ensure_folder(dst_filepath)
-    with lzma.open(src_filepath, "rb") as src_file:
-        with open(dst_filepath, "wb") as dst_file:
-            while data := src_file.read(64 * 1024):
-                dst_file.write(data)
 
 # Generate executable script
 def generate_script_file(dst_filepath, contents):
@@ -94,29 +95,25 @@ def run_qemu(bindir, workdir):
     else:
         print("No acceleration aveilable this might take a while!")
 
-    assert(run("qemu-system-i386", *[
+    assert(run("qemu-system-x86_64", *[
         *accel,
         "-cpu", "qemu64,-hypervisor",
-        "-m", "1024",
-        "-kernel", f"{bindir}/vmlinux",
-        "-initrd", f"{bindir}/initrd",
-        "-append", "console=hvc0 quiet",
+        "-m", "4G",
+        "-kernel", f"{workdir}/vmlinuz",
+        "-initrd", f"{workdir}/initrd",
+        "-append", "console=ttyS0 quiet",
+        "-nographic",
         "-nodefaults",
         "-no-user-config",
-        "-nographic",
-        "-chardev", "stdio,id=virtiocon0",
-        "-device", "virtio-serial-pci",
-        "-device", "virtconsole,chardev=virtiocon0",
-        "-drive", f"file={workdir}/wine.img,format=raw,index=0,media=disk",
+        "-serial", "mon:stdio",
         "-virtfs", f"local,path={workdir}/share,mount_tag=host0,security_model=mapped-xattr,id=host0",
     ]))
 
 # Dump meta
 def dump_meta(bindir, manifest, workdir, dst_dir):
     download_files(f'{bindir}/ManifestDownloader', manifest, f'{workdir}/share/lol', '\.dll|\.exe|Bootstrap\.windows')
-    copy_file(f'{bindir}/powrprof.dll', f'{workdir}/share/lol/WINMM.dll')
-    if not os.path.exists(f"{workdir}/wine.img"):
-        decompress_lzma(f"{bindir}/wine.img.lzma", f"{workdir}/wine.img")
+    copy_file(f'{bindir}/rsaenh.dll', f'{workdir}/share/lol/rsaenh.dll')
+    copy_file(f'{bindir}/yolo.dll', f'{workdir}/share/lol/yolo.dll')
     generate_script_file(f"{workdir}/share/init.sh", INIT_SCRIPT)
     prune_folder("f'{workdir}/share/lol/meta")
     run_qemu(bindir, workdir)
