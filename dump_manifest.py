@@ -15,11 +15,10 @@ export WINEDLLOVERRIDES=rsaenh.dll=n
 export WINEPREFIX="/tmp/prefix"
 timeout 300 wine64 wineboot
 
-rm -rf /sharelol/meta/
-mkdir /share/lol/meta/
+rm -rf /share/lol/meta/
+mkdir -p /share/lol/meta/
 
 cp /share/lol/rsaenh.dll $WINEPREFIX/drive_c/windows/system32/
-cp /share/lol/yolo.dll $WINEPREFIX/drive_c/windows/system32/
 cp -r /share/lol $WINEPREFIX/drive_c/
 
 cd $WINEPREFIX/drive_c/lol
@@ -113,7 +112,6 @@ def run_qemu(bindir, workdir):
 def dump_meta(bindir, manifest, workdir, dst_dir):
     download_files(f'{bindir}/ManifestDownloader', manifest, f'{workdir}/share/lol', '\.dll|\.exe|Bootstrap\.windows')
     copy_file(f'{bindir}/rsaenh.dll', f'{workdir}/share/lol/rsaenh.dll')
-    copy_file(f'{bindir}/yolo.dll', f'{workdir}/share/lol/yolo.dll')
     generate_script_file(f"{workdir}/share/init.sh", INIT_SCRIPT)
     prune_folder("f'{workdir}/share/lol/meta")
     run_qemu(bindir, workdir)
